@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cart.css">
+    <style>
+        /* Cart Drawer Styles */
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: white;
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+            transition: right 0.3s;
+        }
+        .cart-drawer.open {
+            right: 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+        }
+        .cart-footer {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .close-btn {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="header" id="header" style="color: black; background-color:#f1f1f1">
+        <a href="menu.html" style="text-decoration: none;">
+            <span class="menu-icon" style="color: black;">☰</span>
+        </a>        
+        <div class="logo"><img src="images/logo.png" alt="" height="50px"></div>
+        <div class="header-icons" style="color: black;">
+            <div class="search-icon-container" style="color: black;">
+                <span class="search-icon"><ion-icon name="search-outline" style="color: black;"></ion-icon></span>
+            </div>
+            <a href="profile.php"><span class="account-icon" ><ion-icon name="person-outline" style="color:black;"></ion-icon></span></a>
+            <span class="cart-icon" style="cursor: pointer;" onclick="openCart()">
+                <ion-icon name="cart-outline" style="color: black;"></ion-icon>
+            </span>
+        </div>
+    </header>
+    <br>    
+
+    <div class="breadcrumb-container">
+        <h1>About Us</h1>
+        <p>
+            <a href="landing.html" style="color: white; text-decoration: none;">Home</a>
+            <span style="color: white;"> - </span>
+            <a href="aboutus.html" style="color: black; text-decoration: none;">About Us</a>
+        </p>
+    </div>
+
+    <main>
+        <!-- Mission and Vision Section -->
+        <h1 class="h1tag">LIFE PAIRS WITH AROMATHERAPY</h1>
+        <section class="mission-vision">
+            <div class="mission">
+                <h2>Mission</h2>
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Necessitatibus rem perspiciatis tempora obcaecati odit aperiam facilis, porro asperiores accusamus alias ipsa sit nobis eligendi a nemo inventore explicabo sint sed libero. Eos animi quia illo. Quidem similique provident deserunt excepturi, facilis illo pariatur. Sed molestias dolore aspernatur unde quae est!</p>
+            </div>
+            <div class="vision">
+                <h2>Vision</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus quia iusto laudantium porro qui nobis fugit illum placeat, quasi deserunt consectetur molestias reprehenderit magni officiis consequuntur est architecto impedit optio, repellat dolorem amet neque unde hic. Beatae voluptatum, magnam quod reprehenderit et a nam nemo, laboriosam sapiente repellendus suscipit inventore.</p>
+            </div>
+        </section>
+
+        <!-- Our Story Section -->
+        <h1 class="h1tag">Our Story</h1>
+        <section class="our-story">
+            <div class="story-text">
+                <h2>About Us</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+            <div class="story-image">
+                <img src="images/group-image.jpg" alt="Our Story Image">
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <h2>My Cart</h2>
+        <div id="cartItems"></div>
+        <div class="cart-footer">
+            <p>Total: $<span id="cartTotal">0.00</span></p>
+            <button onclick="closeCart()">Close</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-section">
+            <div class="footer-logo"><img src="images/logo.png" alt="" height="100px"></div>
+        </div>
+        <div class="footer-section">
+            <h3>Social</h3>
+            <p>Facebook</p>
+            <p>Instagram</p>
+            <p>LinkedIn</p>
+        </div>
+        <div class="footer-section">
+            <h3>Company</h3>
+            <p>Sustainability Report</p>
+            <p>Zero Station</p>
+        </div>
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <p>Contact us</p>
+        </div>
+    </footer>
+
+    <script>
+        let cart = [];
+        let cartTotal = 0;
+
+        // Function to add items to the cart
+        function addToCart(name, price, image) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ name, price, image, quantity: 1 });
+            }
+            updateCart();
+        }
+
+        // Function to update the cart items and total
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = '';
+            cartTotal = 0;
+
+            cart.forEach((item, index) => {
+                cartTotal += item.price * item.quantity;
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div>
+                        <h4>${item.name}</h4>
+                        <p>$${item.price} x ${item.quantity}</p>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="close-btn">X</button>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+
+            document.getElementById('cartTotal').innerText = cartTotal.toFixed(2);
+            openCart();
+        }
+
+        // Function to remove items from the cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Function to open the cart drawer
+        function openCart() {
+            document.getElementById('cartDrawer').classList.add('open');
+        }
+
+        // Function to close the cart drawer
+        function closeCart() {
+            document.getElementById('cartDrawer').classList.remove('open');
+        }
+    </script>
+</body>
+</html>
